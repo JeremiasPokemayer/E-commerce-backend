@@ -6,15 +6,21 @@ import initMiddleware from "lib/init-middleware";
 
 const cors = initMiddleware(
   Cors({
-    methods: ["GET", "PATCH"],
+    methods: ["GET", "PATCH", "OPTIONS"],
     origin: "http://localhost:3000",
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
 
 async function handler(req: NextApiRequest, res: NextApiResponse, token) {
   await cors(req, res);
-  const { userId } = req.body;
-  const { username, lastname } = req.body;
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  const { userId, username, lastname } = req.body;
   if (req.method === "GET") {
     const user = await getUserById(token.userId);
     res.send(user.data);
