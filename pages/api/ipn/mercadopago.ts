@@ -3,8 +3,18 @@ import { getPaymentById, WebhokPayload } from "lib/mercadopago";
 import { authMiddleware } from "lib/middlewares";
 import { Order } from "models/orders";
 import { sendEmailNotification } from "controllers/user";
+import Cors from "cors";
+import initMiddleware from "lib/init-middleware";
+
+const cors = initMiddleware(
+  Cors({
+    methods: ["POST"],
+    origin: "*",
+  })
+);
 
 export async function handler(req: NextApiRequest, res: NextApiResponse) {
+  await cors(req, res);
   if (req.method === "POST") {
     const email = "jeremiaspokemayerdev@gmail.com";
     const { id }: any = req.body;
@@ -21,12 +31,10 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
       res.status(200).json({ message: "Notificación recibida, mail enviado" });
     } catch (error) {
       console.error("Error al procesar la notificación:", error);
-      res
-        .status(500)
-        .json({
-          message: "Error al procesar la notificación",
-          error: error.message,
-        });
+      res.status(500).json({
+        message: "Error al procesar la notificación",
+        error: error.message,
+      });
     }
   } else {
     res.setHeader("Allow", ["POST"]);
