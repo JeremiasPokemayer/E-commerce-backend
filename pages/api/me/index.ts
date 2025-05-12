@@ -15,10 +15,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse, token) {
   await cors(req, res);
   const { userId } = req.body;
   const { username, lastname } = req.body;
-  if (req.method == "GET") {
+  if (req.method === "GET") {
     const user = await getUserById(token.userId);
     res.send(user.data);
-  } else if (req.method == "PATCH") {
+  } else if (req.method === "PATCH") {
     const user = await updateUser(userId, { username, lastname });
     res.send(user);
   } else {
