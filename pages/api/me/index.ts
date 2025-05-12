@@ -1,9 +1,18 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { authMiddleware } from "lib/middlewares";
 import { getUserById, updateUser } from "controllers/user";
+import Cors from "cors";
 import initMiddleware from "lib/init-middleware";
 
+const cors = initMiddleware(
+  Cors({
+    methods: ["GET", "PATCH"],
+    origin: "http://localhost:3000",
+  })
+);
+
 async function handler(req: NextApiRequest, res: NextApiResponse, token) {
+  await cors(req, res);
   const { userId } = req.body;
   const { username, lastname } = req.body;
   if (req.method === "GET") {
