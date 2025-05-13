@@ -7,8 +7,9 @@ import initMiddleware from "lib/init-middleware";
 const cors = initMiddleware(
   Cors({
     methods: ["GET", "PATCH", "OPTIONS"],
-    origin: "*",
+    origin: "http://localhost:3000/",
     allowedHeaders: ["content-type", "Authorization"],
+    credentials: true,
   })
 );
 
@@ -17,12 +18,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse, token) {
   await cors(req, res);
 
   if (req.method === "OPTIONS") {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, PATCH, OPTIONS");
-    res.setHeader(
-      "Access-Control-Allow-Headers",
-      "content-type, Authorization"
-    );
     return res.status(200).end();
   }
 
