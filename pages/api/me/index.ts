@@ -1,27 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { authMiddleware } from "lib/middlewares";
 import { getUserById, updateUser } from "controllers/user";
-import Cors from "cors";
-import initMiddleware from "lib/init-middleware";
-
-const cors = initMiddleware(
-  Cors({
-    methods: ["GET", "PATCH", "OPTIONS"],
-    origin: "http://localhost:3000/",
-    allowedHeaders: ["content-type", "Authorization"],
-    credentials: true,
-  })
-);
+import { corsMiddleware } from "lib/cors";
 
 async function handler(req: NextApiRequest, res: NextApiResponse, token) {
-  console.log("Ejecutando CORS middleware");
-  await cors(req, res);
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
   const { userId, username, lastname } = req.body;
+
   if (req.method === "GET") {
     const user = await getUserById(token.userId);
     res.send(user.data);
@@ -35,4 +19,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse, token) {
   }
 }
 
-export default authMiddleware(handler);
+function withCors(req: NextApiRequest, res: NextApiResponse) {
+  const ended = corsMiddleware(req, res);
+  if (ended) return;
+  return authMiddleware(handler)(req, res);
+}
+
+export default withCors;
