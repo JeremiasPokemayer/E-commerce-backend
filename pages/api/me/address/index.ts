@@ -2,15 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { authMiddleware } from "lib/middlewares";
 import { updateUserAddress } from "controllers/user";
 import * as Yup from "yup";
-import Cors from "cors";
-import initMiddleware from "lib/init-middleware";
-
-const cors = initMiddleware(
-  Cors({
-    methods: ["PATCH"],
-    origin: "*",
-  })
-);
+import { corsMiddleware } from "lib/cors";
 
 const addressSchema = Yup.object().shape({
   calle: Yup.string().required("La calle es obligatoria"),
@@ -21,7 +13,6 @@ const addressSchema = Yup.object().shape({
 });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  await cors(req, res);
   if (req.method !== "PATCH") {
     return res
       .status(405)
@@ -42,4 +33,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default authMiddleware(handler);
+function withCors(req: NextApiRequest, res: NextApiResponse) {
+  const ended = corsMiddleware(req, res);
+  if (ended) return; // Preflight handled
+
+  return authMiddleware(handler)(req, res);
+}
+
+export default withCors;

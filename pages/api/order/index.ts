@@ -1,17 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { generateOrder, getOrder } from "controllers/orders";
-import Cors from "cors";
-import initMiddleware from "lib/init-middleware";
-
-const cors = initMiddleware(
-  Cors({
-    methods: ["POST", "GET"],
-    origin: "*",
-  })
-);
+import { corsMiddleware } from "lib/cors";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
-  await cors(req, res);
+  const ended = corsMiddleware(req, res);
+  if (ended) return;
+
   if (req.method == "POST") {
     const { productId } = req.query;
     try {

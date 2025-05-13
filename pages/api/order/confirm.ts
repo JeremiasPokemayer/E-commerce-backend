@@ -1,17 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { Order } from "models/orders";
-import Cors from "cors";
-import initMiddleware from "lib/init-middleware";
-
-const cors = initMiddleware(
-  Cors({
-    methods: ["POST"],
-    origin: "*",
-  })
-);
+import { corsMiddleware } from "lib/cors";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
-  await cors(req, res);
+  const ended = corsMiddleware(req, res);
+  if (ended) return;
+
   if (req.method !== "POST") {
     return res.status(405).json({
       message: "Método no permitido, unicamente disponible method --POST--",
