@@ -4,7 +4,7 @@ import seedrandom from "seedrandom";
 import { Resend } from "resend";
 import { addMinutes } from "date-fns/addMinutes";
 
-function generateCode(seed) {
+function generateCode(seed = Date.now().toString()) {
   const rng = seedrandom(seed);
   const code = Math.floor(rng() * 90000) + 10000;
   return code;
@@ -31,7 +31,7 @@ export async function findOrCreateAuth(email: string) {
 
 export async function sendCode(email: string) {
   const auth = await findOrCreateAuth(email);
-  const code = generateCode("random");
+  const code = generateCode();
   const now = new Date();
   const twentyMinutesFromNow = addMinutes(now, 20);
   auth.data.code = code;

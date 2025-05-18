@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { authMiddleware } from "lib/middlewares";
 import { getUserById, updateUser } from "controllers/user";
-import { corsMiddleware } from "lib/cors";
 
 async function handler(req: NextApiRequest, res: NextApiResponse, token) {
   const { userId, username, lastname } = req.body;
@@ -19,10 +18,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse, token) {
   }
 }
 
-function withCors(req: NextApiRequest, res: NextApiResponse) {
-  const ended = corsMiddleware(req, res);
-  if (ended) return;
-  return authMiddleware(handler)(req, res);
-}
-
-export default withCors;
+export default authMiddleware(handler);

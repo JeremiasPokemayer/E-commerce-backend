@@ -3,7 +3,6 @@ import { getPaymentById, WebhokPayload } from "lib/mercadopago";
 import { authMiddleware } from "lib/middlewares";
 import { Order } from "models/orders";
 import { sendEmailNotification } from "controllers/user";
-import { corsMiddleware } from "lib/cors";
 
 export async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
@@ -33,11 +32,4 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-function withCors(req: NextApiRequest, res: NextApiResponse) {
-  const ended = corsMiddleware(req, res);
-  if (ended) return;
-
-  return authMiddleware(handler)(req, res);
-}
-
-export default withCors;
+export default authMiddleware(handler);

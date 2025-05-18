@@ -1,12 +1,8 @@
 import getOffsetAndLimitFromReq from "lib/request";
 import { client, indexName } from "db/algolia";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { corsMiddleware } from "lib/cors";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
-  const ended = corsMiddleware(req, res);
-  if (ended) return;
-
   const { offset, limit } = getOffsetAndLimitFromReq(req);
   const query = req.query.q as string;
   const response = await client.search({
