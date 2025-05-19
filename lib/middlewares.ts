@@ -17,7 +17,7 @@ export function authMiddleware(callback) {
   };
 }
 
-export default function initMiddleware(middleware: any) {
+export default function initMiddleware(middleware) {
   return (req: NextApiRequest, res: NextApiResponse) =>
     new Promise((resolve, reject) => {
       middleware(req, res, (result: any) => {
