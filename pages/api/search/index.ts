@@ -1,8 +1,16 @@
 import getOffsetAndLimitFromReq from "lib/request";
 import { client, indexName } from "db/algolia";
 import type { NextApiRequest, NextApiResponse } from "next";
+import cors from "lib/cors";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
+  await cors(req, res);
+
+  if (req.method === "OPTIONS") {
+    res.status(200).end(); // Maneja preflight correctamente
+    return;
+  }
+
   const { offset, limit } = getOffsetAndLimitFromReq(req);
   const query = req.query.q as string;
   const response = await client.search({

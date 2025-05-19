@@ -1,9 +1,16 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { authMiddleware } from "lib/middlewares";
 import { getUserById, updateUser } from "controllers/user";
+import cors from "lib/cors";
 
 async function handler(req: NextApiRequest, res: NextApiResponse, token) {
   const { userId, username, lastname } = req.body;
+  await cors(req, res);
+
+  if (req.method === "OPTIONS") {
+    res.status(200).end(); // Maneja preflight correctamente
+    return;
+  }
 
   if (req.method === "GET") {
     const user = await getUserById(token.userId);

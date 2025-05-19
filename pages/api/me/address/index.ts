@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { authMiddleware } from "lib/middlewares";
 import { updateUserAddress } from "controllers/user";
 import * as Yup from "yup";
+import cors from "lib/cors";
 
 const addressSchema = Yup.object().shape({
   calle: Yup.string().required("La calle es obligatoria"),
@@ -12,6 +13,13 @@ const addressSchema = Yup.object().shape({
 });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
+  await cors(req, res);
+
+  if (req.method === "OPTIONS") {
+    res.status(200).end(); // Maneja preflight correctamente
+    return;
+  }
+
   if (req.method !== "PATCH") {
     return res
       .status(405)

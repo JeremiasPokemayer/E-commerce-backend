@@ -3,8 +3,16 @@ import { getPaymentById, WebhokPayload } from "lib/mercadopago";
 import { authMiddleware } from "lib/middlewares";
 import { Order } from "models/orders";
 import { sendEmailNotification } from "controllers/user";
+import cors from "lib/cors";
 
 export async function handler(req: NextApiRequest, res: NextApiResponse) {
+  await cors(req, res);
+
+  if (req.method === "OPTIONS") {
+    res.status(200).end(); // Maneja preflight correctamente
+    return;
+  }
+
   if (req.method === "POST") {
     const email = "jeremiaspokemayerdev@gmail.com";
     const { id }: any = req.body;
