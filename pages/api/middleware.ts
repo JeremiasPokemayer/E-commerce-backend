@@ -14,7 +14,7 @@ export function middleware(req: NextRequest) {
     );
     res.headers.set(
       "Access-Control-Allow-Headers",
-      req.headers.get("Access-Control-Request-Headers") || ""
+      "Authorization, Content-Type, X-Requested-With"
     );
     res.headers.set("Vary", "Access-Control-Request-Headers");
     res.headers.set("Content-Length", "0");
