@@ -3,14 +3,8 @@ import { authMiddleware } from "lib/middlewares";
 import { getUserById, updateUser } from "controllers/user";
 import cors from "lib/cors";
 
-async function handler(req: NextApiRequest, res: NextApiResponse, token) {
+async function baseHandler(req: NextApiRequest, res: NextApiResponse, token) {
   const { userId, username, lastname, address, phone } = req.body;
-  await cors(req, res);
-
-  if (req.method === "OPTIONS") {
-    res.status(200).end(); // Maneja preflight correctamente
-    return;
-  }
 
   if (req.method === "GET") {
     const user = await getUserById(token.userId);
@@ -30,4 +24,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse, token) {
   }
 }
 
-export default authMiddleware(handler);
+// Nuevo handler que maneja OPTIONS y CORS antes que cualquier auth
+async function handler(req: NextApiRequest, res: NextApiResponse) {
+  await cors(req, res);
+
+  if (req.method === "OPTIONS") {
+    res.status(200).end();
+    return;
+  }
+
+  return authMiddleware(baseHandler)(req, res);
+}
+
+export default handler;
