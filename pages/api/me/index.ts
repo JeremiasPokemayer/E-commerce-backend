@@ -4,10 +4,13 @@ import { getUserById, updateUser } from "controllers/user";
 import cors from "lib/cors";
 
 async function baseHandler(req: NextApiRequest, res: NextApiResponse, token) {
+  const { id }: any = req.query;
   const { userId, username, lastname, address, phone } = req.body;
 
   if (req.method === "GET") {
-    const user = await getUserById(userId);
+    console.log(id);
+
+    const user = await getUserById(id);
     res.send(user.data);
   } else if (req.method === "PATCH") {
     const user = await updateUser(userId, {
