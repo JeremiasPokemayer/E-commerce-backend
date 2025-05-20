@@ -7,7 +7,7 @@ async function baseHandler(req: NextApiRequest, res: NextApiResponse, token) {
   const { userId, username, lastname, address, phone } = req.body;
 
   if (req.method === "GET") {
-    const user = await getUserById(token.userId);
+    const user = await getUserById(userId);
     res.send(user.data);
   } else if (req.method === "PATCH") {
     const user = await updateUser(userId, {
