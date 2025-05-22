@@ -7,7 +7,7 @@ const client = new MercadoPagoConfig({
   options: { timeout: 5000, idempotencyKey: "abc" },
 });
 
-const BASE_URL = process.env.VERCEL_URL;
+const FRONT_URL = process.env.FRONT_URL;
 
 // Step 3: Initialize the API object
 const pref = new Preference(client);
@@ -47,9 +47,9 @@ export async function createSingleProductPreference(
       ],
       // URL de redirección en los distintos casos
       back_urls: {
-        success: `https://${BASE_URL}/donate/success`,
-        failure: `https://${BASE_URL}/donate/failure`,
-        pending: `https://${BASE_URL}/donate/pending`,
+        success: `${FRONT_URL}/payment/success`,
+        failure: `${FRONT_URL}/payment/failure`,
+        pending: `${FRONT_URL}/payment/pending`,
       },
       // Esto puede ser el id o algún otro identificador
       // que te ayude a vincular este pago con el producto más adelante

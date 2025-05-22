@@ -6,7 +6,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   await cors(req, res);
 
   if (req.method === "OPTIONS") {
-    res.status(200).end(); // Maneja preflight correctamente
+    res.status(200).end();
     return;
   }
 
