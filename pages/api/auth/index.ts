@@ -11,9 +11,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "OPTIONS") {
     res.status(200).end();
     return;
-  }
-
-  if (req.method === "POST") {
+  } else if (req.method === "POST") {
     const auth = await sendCode(req.body.email);
 
     const { data, error } = await resend.emails.send({
