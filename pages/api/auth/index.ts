@@ -14,7 +14,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   } else if (req.method === "POST") {
     const auth = await sendCode(req.body.email);
 
-    const { data, error } = await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: "onboarding@resend.dev",
       to: req.body.email,
       subject: "¡NO LO COMPARTAS CON NADIE!",
@@ -23,7 +23,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     if (error) {
       res.status(400).json(error);
     }
-    res.status(200).json(data);
+    res.status(200).json(auth);
   } else {
     res.setHeader("Allow", ["POST"]);
     res.status(405).end(`Método ${req.method} no permitido`);
