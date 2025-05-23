@@ -4,6 +4,8 @@ import seedrandom from "seedrandom";
 import { Resend } from "resend";
 import { addMinutes } from "date-fns/addMinutes";
 
+const resend = new Resend(process.env.RESEND_KEY);
+
 function generateCode(seed = Date.now().toString()) {
   const rng = seedrandom(seed);
   const code = Math.floor(rng() * 90000) + 10000;
@@ -37,13 +39,16 @@ export async function sendCode(email: string) {
   auth.data.code = code;
   auth.data.expires = twentyMinutesFromNow;
   await auth.push();
-  const resend = new Resend(process.env.RESEND_KEY);
-  resend.emails.send({
-    from: "Acme <onboarding@resend.dev>",
+  const msg = {
+    from: "<onboarding@resend.dev>",
     to: email,
-    subject: "Code from Back -- ¡NO LO COMPARTAS CON NADIE!",
+    subject: "¡NO LO COMPARTAS CON NADIE!",
     html: `<p>Este es tu codigo: <strong>${auth.data.code}</strong></p>`,
-  });
-  console.log("email enviado a " + email + " con codigo " + auth.data.code);
+  };
+  try {
+    await resend.emails.send(msg);
+  } catch (e) {
+    throw "No fue posible enviar el mail";
+  }
   return auth;
 }
