@@ -15,7 +15,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     const auth = await sendCode(req.body.email);
 
     const { data, error } = await resend.emails.send({
-      from: "<onboarding@resend.dev>",
+      from: "onboarding@resend.dev",
       to: req.body.email,
       subject: "¡NO LO COMPARTAS CON NADIE!",
       html: `<p>Este es tu codigo: <strong>${auth.data.code}</strong></p>`,
