@@ -16,18 +16,16 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
     const auth = await sendCode(req.body.email);
 
-    const msg = {
+    const { data, error } = await resend.emails.send({
       from: "<onboarding@resend.dev>",
       to: req.body.email,
       subject: "¡NO LO COMPARTAS CON NADIE!",
       html: `<p>Este es tu codigo: <strong>${auth.data.code}</strong></p>`,
-    };
-    try {
-      await resend.emails.send(msg);
-    } catch (e) {
-      throw "No fue posible enviar el mail";
+    });
+    if (error) {
+      res.status(400).json(error);
     }
-    res.send(auth);
+    res.status(200).json(data);
   } else {
     res.setHeader("Allow", ["POST"]);
     res.status(405).end(`Método ${req.method} no permitido`);
