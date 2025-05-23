@@ -1,10 +1,7 @@
 import { User } from "models/user";
 import { Auth } from "models/auth";
 import seedrandom from "seedrandom";
-import { Resend } from "resend";
 import { addMinutes } from "date-fns/addMinutes";
-
-const resend = new Resend(process.env.RESEND_KEY);
 
 function generateCode(seed = Date.now().toString()) {
   const rng = seedrandom(seed);
@@ -39,16 +36,5 @@ export async function sendCode(email: string) {
   auth.data.code = code;
   auth.data.expires = twentyMinutesFromNow;
   await auth.push();
-  const msg = {
-    from: "<onboarding@resend.dev>",
-    to: email,
-    subject: "¡NO LO COMPARTAS CON NADIE!",
-    html: `<p>Este es tu codigo: <strong>${auth.data.code}</strong></p>`,
-  };
-  try {
-    await resend.emails.send(msg);
-  } catch (e) {
-    throw "No fue posible enviar el mail";
-  }
   return auth;
 }
